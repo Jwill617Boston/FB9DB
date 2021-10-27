@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { Link, useParams } from "react-router-dom";
 import { db } from "../../../firebaseConfig";
 
 const AmiditesHome = () => {

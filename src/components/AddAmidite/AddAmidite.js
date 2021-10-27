@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./AddAmidite";
-import { db, storage } from "../../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import {
    collection,
    getDocs,
@@ -11,20 +11,10 @@ import {
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Button from "@mui/material/Button";
-
-import Link from "@mui/material/Link";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 
-function createData(chemName, molWeight) {
-   return { chemName, molWeight };
-}
-
 function AddAmidite() {
+   // STATE
    const [amiditeName, setAmiditeName] = useState("");
    const [chemName, setChemName] = useState("");
    const [shortAbv, setShortAbv] = useState("");
@@ -34,34 +24,41 @@ function AddAmidite() {
    const [casNum, setCasNum] = useState("");
    const [file, setFile] = useState("");
    const [url, setUrl] = useState(null);
-
-   console.log(`This is File:${file}`);
-
-   console.log(`This is Url:${url}`);
-
-   useEffect(async () => {
-      const storage = getStorage();
-      const storageRef = ref(storage, file.name);
-
-      await uploadBytes(storageRef, file).then((snapshot) => {
-         console.log("Uploaded a blob or file!");
-         console.log(`This is Uploaded this:${snapshot}`);
-      });
-      getDownloadURL(ref(storage, file.name)).then((url) => {
-         setUrl(url);
-      });
-   }, [file]);
-
    const [amidites, setAmidites] = useState([]);
    const [amiditesGrid, setAmiditesGird] = useState({});
-   const amiditesCollectionRef = collection(db, "amidites");
-
-   console.log(amiditesGrid);
-   const rows = [
-      createData(amiditesGrid.chemName),
-      createData(amiditesGrid.molWeight),
-   ];
    const [progress, setProgress] = useState(0);
+
+   // FIREBASE REF
+   const amiditesCollectionRef = collection(db, "amidites");
+   const storage = getStorage();
+
+   console.log(`This is File:${file}`);
+   console.log(`This is Url:${url}`);
+
+   // useEFFECTS
+   useEffect(async () => {
+      const getUpload = async () => {
+         const storageRef = ref(storage, file.name);
+         await uploadBytes(storageRef, file).then((snapshot) => {
+            console.log("Uploaded a blob or file!");
+            console.log(`This is Uploaded this:${snapshot}`);
+         });
+         getDownloadURL(ref(storage, file.name)).then((url) => {
+            setUrl(url);
+         });
+      };
+      getUpload();
+   }, [file]);
+
+   useEffect(() => {
+      const getAmidites = async () => {
+         const data = await getDocs(amiditesCollectionRef);
+         setAmidites(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      };
+      getAmidites();
+   }, []);
+
+   // FUNCTIONAL COMPS
 
    const createAmidite = async () => {
       const storage = getStorage();
@@ -86,12 +83,6 @@ function AddAmidite() {
       });
    };
 
-   const handleChange = (e) => {
-      if (e.target.files[0]) {
-         setFile(e.target.files[0]);
-      }
-   };
-
    const updateAmidite = async (id) => {
       const userDoc = doc(db, "amidites", id);
       const newFields = {
@@ -112,28 +103,7 @@ function AddAmidite() {
       await deleteDoc(userDoc);
    };
 
-   const AmiditesHomeGrid = () => {
-      return (
-         <>
-            <Table size="small">
-               <TableHead>
-                  <TableRow>
-                     <TableCell>ChemName</TableCell>
-                     <TableCell>MolWeight</TableCell>
-                  </TableRow>
-               </TableHead>
-               <TableBody>
-                  {rows.map((row) => (
-                     <TableRow key={row.id}>
-                        <TableCell>{row.chemName}</TableCell>
-                        <TableCell>{row.molWeight}</TableCell>
-                     </TableRow>
-                  ))}
-               </TableBody>
-            </Table>
-         </>
-      );
-   };
+   // PRESENTATIONAL COMP
 
    const AmiditesHome = () => {
       return (
@@ -206,13 +176,12 @@ function AddAmidite() {
       );
    };
 
-   useEffect(() => {
-      const getAmidites = async () => {
-         const data = await getDocs(amiditesCollectionRef);
-         setAmidites(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      };
-      getAmidites();
-   }, []);
+   // HANLDER
+   const handleChange = (e) => {
+      if (e.target.files[0]) {
+         setFile(e.target.files[0]);
+      }
+   };
 
    return (
       <div className="App">
