@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getStorage} from "firebase/storage"
+import { initializeApp, firebase } from "firebase/app";
+import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
@@ -7,6 +7,7 @@ import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
    apiKey: "AIzaSyBOS8CnnRnhfkjAcLAMfy3I8ysBoBP3V_g",
    authDomain: "fb9db-d7c37.firebaseapp.com",
+   databaseURL: "gs://fb9db-d7c37.appspot.com",
    projectId: "fb9db-d7c37",
    storageBucket: "fb9db-d7c37.appspot.com",
    messagingSenderId: "691445013787",

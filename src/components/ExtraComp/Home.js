@@ -10,7 +10,7 @@ import {
    updateDoc,
    deleteDoc,
 } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { db } from "../../firebaseConfig";
 
 const Home = () => {
    const [tasks, setTasks] = useState([]);

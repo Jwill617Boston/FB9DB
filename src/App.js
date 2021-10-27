@@ -1,22 +1,16 @@
 
 import { useEffect, useState } from "react";
-import AddTask from "./components/AddTask";
-import Home from "./components/Home";
-import Task from "./components/Task";
-import Test from "./components/Test";
-
-
+import { Route, Switch } from "react-router";
+import AmiditesHome from "./components/ExtraComp/AmiditesHome/AmiditesHome";
+import AddAmidite from "./components/AddAmidite/AddAmidite";
+import React from "react";
 
 const App = () => {
-
-  return (
-    <div>
-      <Home />
-      <Test />      
-      <AddTask />
-    
-    </div>
-  );
+   return (
+      <div>
+         <AddAmidite />
+      </div>
+   );
 };
 
 export default App;
