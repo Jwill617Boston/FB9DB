@@ -4,14 +4,27 @@ import { db } from "../../firebaseConfig";
 import {
    collection,
    getDocs,
+   getDoc,
    addDoc,
    updateDoc,
    deleteDoc,
    doc,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+// MATERIAL UI
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import Link from "@mui/material/Link";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import EditIcon from "@mui/icons-material/Edit";
+import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import { DataGrid } from "@mui/x-data-grid";
 
 function AddAmidite() {
    // STATE
@@ -25,7 +38,7 @@ function AddAmidite() {
    const [file, setFile] = useState("");
    const [url, setUrl] = useState(null);
    const [amidites, setAmidites] = useState([]);
-   const [amiditesGrid, setAmiditesGird] = useState({});
+   const [amiditesView, setAmiditesView] = useState([]);
    const [progress, setProgress] = useState(0);
 
    // FIREBASE REF
@@ -34,6 +47,7 @@ function AddAmidite() {
 
    console.log(`This is File:${file}`);
    console.log(`This is Url:${url}`);
+   console.log(`This is AmiditesView:${amiditesView}`);
 
    // useEFFECTS
    useEffect(() => {
@@ -57,6 +71,37 @@ function AddAmidite() {
       };
       getAmidites();
    }, []);
+
+   useEffect(() => {
+      fetch("https://jsonplaceholder.typicode.com/posts")
+         .then((response) => response.json())
+         .then((json) => setAmiditesView(json));
+   }, []);
+
+   // DATAGRID
+   const columns = [
+      { title: "ID", field: "id" },
+      { field: "AmiditeName", headerName: "AmiditeName", width: 150 },
+      {
+         field: "ChemName",
+         headerName: "ChemName",
+         width: 150,
+         editable: true,
+      },
+      {
+         field: "id",
+         headerName: "id",
+         description: "This column has a value getter and is not sortable.",
+         sortable: false,
+         width: 160,
+         valueGetter: (params) =>
+            `${params.getValue(params.id, "firstName") || ""} ${
+               params.getValue(params.id, "lastName") || ""
+            }`,
+      },
+   ];
+
+   const rows = [];
 
    // FUNCTIONAL COMPS
 
@@ -84,7 +129,7 @@ function AddAmidite() {
    };
 
    const updateAmidite = async (id) => {
-      const userDoc = doc(db, "amidites", id);
+      const amiditeDoc = doc(db, "amidites", id);
       const newFields = {
          chemName,
          molWeight,
@@ -95,85 +140,117 @@ function AddAmidite() {
          mmAbv,
          ChemDrawFile: url,
       };
-      await updateDoc(userDoc, newFields);
+      await updateDoc(amiditeDoc, newFields);
    };
 
    const deleteAmidite = async (id) => {
-      const userDoc = doc(db, "amidites", id);
-      await deleteDoc(userDoc);
+      const amiditeDoc = doc(db, "amidites", id);
+      await deleteDoc(amiditeDoc);
    };
 
    // PRESENTATIONAL COMP
 
    const AmiditesHome = () => {
       return (
-         <table className="styled-table">
-            <thead>
-               <tr>
-                  <th style={{ textAlign: "center" }}>No.</th>
-                  <th style={{ textAlign: "center" }}>Amidite Name</th>
-                  <th style={{ textAlign: "center" }}>Chem Name</th>
-                  <th style={{ textAlign: "center" }}>Mole Weight</th>
-                  <th style={{ textAlign: "center" }}>Cas Number</th>
-                  <th style={{ textAlign: "center" }}>Reg Abv</th>
-                  <th style={{ textAlign: "center" }}>Short Abv</th>
-                  <th style={{ textAlign: "center" }}>Mermade Abv</th>
-                  <th style={{ textAlign: "center" }}>Edit</th>
-                  <th style={{ textAlign: "center" }}>Delete</th>
-                  <th style={{ textAlign: "center" }}>View</th>
-                  <th style={{ textAlign: "center" }}>Chem draw SVG</th>
-               </tr>
-            </thead>
-            <tbody>
-               {amidites.map((amidite) => {
-                  return (
-                     <tr key={amidite.id}>
-                        <th scope="row">{amidite.id}</th>
-                        <td>{amidite.amiditeName}</td>
-                        <td>{amidite.chemName}</td>
-                        <td>{amidite.molWeight}</td>
-                        <td>{amidite.casNum}</td>
-                        <td>{amidite.regAbv}</td>
-                        <td>{amidite.shortAbv}</td>
-                        <td>{amidite.mmAbv}</td>
-                        <td>
-                           <Button
-                              variant="contained"
-                              onClick={() => {
-                                 updateAmidite(amidite.id, amidite.molWeight);
-                              }}
-                           >
-                              {" "}
-                              Edit Amidite
-                           </Button>
-                        </td>
-                        <td>
-                           <Button
-                              variant="contained"
-                              onClick={() => {
-                                 deleteAmidite(amidite.id);
-                              }}
-                           >
-                              {" "}
-                              Delete Amidite
-                           </Button>
-                        </td>
-                        <td>
-                           <Button variant="contained" className="btn btn-view">
-                              View
-                           </Button>
-                        </td>
-                        <td>
-                           <Button variant="contained" href={amidite.url}>
-                              File
-                           </Button>
-                        </td>
-                     </tr>
-                  );
-               })}
-            </tbody>
-         </table>
+         <>
+            <div style={{ height: 400, width: "100%" }}>
+               <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  checkboxSelection
+                  disableSelectionOnClick
+               />
+            </div>
+            <table className="styled-table">
+               <thead>
+                  <tr>
+                     <th style={{ textAlign: "center" }}>No.</th>
+                     <th style={{ textAlign: "center" }}>Amidite Name</th>
+                     <th style={{ textAlign: "center" }}>Chem Name</th>
+                     <th style={{ textAlign: "center" }}>Mole Weight</th>
+                     <th style={{ textAlign: "center" }}>Cas Number</th>
+                     <th style={{ textAlign: "center" }}>Reg Abv</th>
+                     <th style={{ textAlign: "center" }}>Short Abv</th>
+                     <th style={{ textAlign: "center" }}>Mermade Abv</th>
+                     <th style={{ textAlign: "center" }}>Options</th>
+                     <th style={{ textAlign: "center" }}>View</th>
+                     <th style={{ textAlign: "center" }}>Options</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {amidites.map((amidite) => {
+                     return (
+                        <tr key={amidite.id}>
+                           <th scope="row">{amidite.id}</th>
+                           <td>{amidite.amiditeName}</td>
+                           <td>{amidite.chemName}</td>
+                           <td>{amidite.molWeight}</td>
+                           <td>{amidite.casNum}</td>
+                           <td>{amidite.regAbv}</td>
+                           <td>{amidite.shortAbv}</td>
+                           <td>{amidite.mmAbv}</td>
+                           <td>{amidite.url}</td>
+                           <td>
+                              <Button
+                                 variant="contained"
+                                 className="btn btn-view"
+                              >
+                                 View
+                              </Button>
+                           </td>
+                           <td>
+                              <ButtonGroup
+                                 variant="contained"
+                                 aria-label="outlined primary button group"
+                              >
+                                 <Tooltip title="Edit">
+                                    <IconButton
+                                       variant="contained"
+                                       onClick={() => {
+                                          updateAmidite(amidite.id);
+                                       }}
+                                    >
+                                       <EditIcon />
+                                    </IconButton>
+                                 </Tooltip>
+                                 <Tooltip title="Delete">
+                                    <IconButton
+                                       variant="contained"
+                                       onClick={() => {
+                                          deleteAmidite(amidite.id);
+                                       }}
+                                    >
+                                       <DeleteIcon />
+                                    </IconButton>
+                                 </Tooltip>
+                              </ButtonGroup>
+                              <Link href={amidite.url} color="inherit">
+                                 {"hello"}
+                              </Link>
+                           </td>
+                        </tr>
+                     );
+                  })}
+               </tbody>
+            </table>
+         </>
       );
+   };
+
+   const AmiditeView = async (id) => {
+      const docRef = doc(db, "amidites", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+         console.log("Document data:", docSnap.data());
+         setAmiditesView(docSnap.data());
+      } else {
+         console.log("No such document!");
+      }
+
+      return <div></div>;
    };
 
    // HANLDER
@@ -208,6 +285,7 @@ function AddAmidite() {
             id="MolWeight"
             label="Mol Weight..."
             variant="standard"
+            type="number"
             onChange={(event) => {
                setMolWeight(event.target.value);
             }}
