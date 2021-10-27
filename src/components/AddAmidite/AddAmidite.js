@@ -36,7 +36,7 @@ function AddAmidite() {
    console.log(`This is Url:${url}`);
 
    // useEFFECTS
-   useEffect(async () => {
+   useEffect(() => {
       const getUpload = async () => {
          const storageRef = ref(storage, file.name);
          await uploadBytes(storageRef, file).then((snapshot) => {
