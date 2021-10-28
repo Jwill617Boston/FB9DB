@@ -76,7 +76,6 @@ function Amidites() {
                      <th style={{ textAlign: "center" }}>Reg Abv</th>
                      <th style={{ textAlign: "center" }}>Short Abv</th>
                      <th style={{ textAlign: "center" }}>Mermade Abv</th>
-                     <th style={{ textAlign: "center" }}>Options</th>
                      <th style={{ textAlign: "center" }}>File</th>
                   </tr>
                </thead>
@@ -92,51 +91,6 @@ function Amidites() {
                            <td>{amidite.regAbv}</td>
                            <td>{amidite.shortAbv}</td>
                            <td>{amidite.mmAbv}</td>
-                           <td>
-                              <ButtonGroup
-                                 variant="contained"
-                                 aria-label="outlined primary button group"
-                              >
-                                 <Tooltip title="Edit">
-                                    <IconButton
-                                       variant="contained"
-                                       onClick={() => {
-                                          updateAmidite(amidite.id);
-                                       }}
-                                    >
-                                       <EditIcon />
-                                    </IconButton>
-                                 </Tooltip>
-                                 <Tooltip title="Delete">
-                                    <IconButton
-                                       variant="contained"
-                                       onClick={() => {
-                                          deleteAmidite(amidite.id);
-                                       }}
-                                    >
-                                       <DeleteIcon />
-                                    </IconButton>
-                                 </Tooltip>
-                                 <Tooltip title="Link">
-                                    <IconButton
-                                       variant="contained"
-                                       href={amidite.ChemDrawFile}
-                                    >
-                                       <LinkIcon />
-                                    </IconButton>
-                                 </Tooltip>
-                                 <Tooltip title="Download">
-                                    <IconButton
-                                       variant="contained"
-                                       onClick={() => {
-                                          downLoadAmidite(amidite.ChemDrawFile);
-                                       }}
-                                    >
-                                       <DownloadIcon />
-                                    </IconButton>
-                                 </Tooltip>
-                              </ButtonGroup>
-                           </td>
                            <td>
                               <img
                                  width={100}

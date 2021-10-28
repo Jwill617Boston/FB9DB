@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
-import "./AddAmidite";
-import { toast } from "react-toastify";
-
-// ******UPDATED PAGE*********
-
-// FIREBASE IMPORTS
-import { db } from "../../firebaseConfig";
+import { db } from "../../../firebaseConfig";
 import {
    collection,
    getDocs,
@@ -16,9 +10,8 @@ import {
    doc,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import useFirestore from "../../Hooks/useFirestore";
 
-// MATERIAL UI IMPORTS
+// MATERIAL UI
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -27,78 +20,37 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import EditIcon from "@mui/icons-material/Edit";
-
-import PublishRoundedIcon from "@mui/icons-material/PublishRounded";
-import { Grid } from "@mui/material";
-
+import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import { DataGrid } from "@mui/x-data-grid";
 import LinkIcon from "@mui/icons-material/Link";
 import DownloadIcon from "@mui/icons-material/Download";
 
-const initialState = {
-   amiditeName: "",
-   chemName: "",
-   shortAbv: "",
-   regAbv: "",
-   casNum: "",
-   molWeight: Number(molWeight),
-   mmAbv: "",
-   fileUrl: "",
-};
-
 function AddAmidite() {
    // STATE
-   const { docs } = useFirestore("amidites");
-   const [state, setState] = useState(initialState);
-   const [data, setData] = useState({});
-   const [file, setFile] = useState(null);
-   const [url, setUrl] = useState("");
-
-   const {
-      amiditeName,
-      chemName,
-      shortAbv,
-      regAbv,
-      mmAbv,
-      casNum,
-      molWeight,
-      fileUrl,
-   } = state;
-
-   const history = useHistory();
-
-   const { id } = useParams();
-
-   console.log(`The ID: ${id}`);
+   const [amiditeName, setAmiditeName] = useState("");
+   const [chemName, setChemName] = useState("");
+   const [shortAbv, setShortAbv] = useState("");
+   const [regAbv, setRegAbv] = useState("");
+   const [mmAbv, setMmAbv] = useState("");
+   const [molWeight, setMolWeight] = useState(0);
+   const [casNum, setCasNum] = useState("");
+   const [file, setFile] = useState("");
+   const [url, setUrl] = useState(null);
+   const [amidites, setAmidites] = useState([]);
+   const [amiditesView, setAmiditesView] = useState([]);
+   const [progress, setProgress] = useState(0);
 
    // FIREBASE REF
    const amiditesCollectionRef = collection(db, "amidites");
    const storage = getStorage();
 
+   console.log(`This is File:${file}`);
+   console.log(`This is Url:${url}`);
+   console.log(`This is AmiditesView:${amiditesView}`);
+
    // useEFFECTS
-
-   useEffect(() => {
-      if (docs !== null) {
-         setData(docs);
-      } else {
-         setData({});
-      }
-   }, [docs]);
-
-   useEffect(() => {
-      if (id) {
-         async function fetchData() {
-            const docRef = doc(db, "amidites", id);
-            const docSnap = await getDoc(docRef);
-            const data = docSnap.data();
-            console.log(`Fetched Data:${data}`);
-            setState(data);
-         }
-         fetchData();
-      } else {
-         setState({ ...initialState });
-      }
-   }, [id, data]);
-
    useEffect(() => {
       const getUpload = async () => {
          const storageRef = ref(storage, file.name);
@@ -121,9 +73,41 @@ function AddAmidite() {
       getAmidites();
    }, []);
 
+   useEffect(() => {
+      fetch("https://jsonplaceholder.typicode.com/posts")
+         .then((response) => response.json())
+         .then((json) => setAmiditesView(json));
+   }, []);
+
+   // DATAGRID
+   const columns = [
+      { title: "ID", field: "id" },
+      { field: "AmiditeName", headerName: "AmiditeName", width: 150 },
+      {
+         field: "ChemName",
+         headerName: "ChemName",
+         width: 150,
+         editable: true,
+      },
+      {
+         field: "id",
+         headerName: "id",
+         description: "This column has a value getter and is not sortable.",
+         sortable: false,
+         width: 160,
+         valueGetter: (params) =>
+            `${params.getValue(params.id, "firstName") || ""} ${
+               params.getValue(params.id, "lastName") || ""
+            }`,
+      },
+   ];
+
+   const rows = [];
+
    // FUNCTIONAL COMPS
 
    const createAmidite = async () => {
+      const storage = getStorage();
       const storageRef = ref(storage, file.name);
 
       await uploadBytes(storageRef, file).then((snapshot) => {
@@ -134,14 +118,14 @@ function AddAmidite() {
          setUrl(url);
       });
       await addDoc(amiditesCollectionRef, {
-         amiditeName,
          chemName,
+         molWeight: Number(molWeight),
+         casNum,
          shortAbv,
          regAbv,
+         amiditeName,
          mmAbv,
-         casNum,
-         molWeight,
-         fileUrl,
+         ChemDrawFile: url,
       });
    };
 
@@ -155,7 +139,7 @@ function AddAmidite() {
          regAbv,
          amiditeName,
          mmAbv,
-         fileUrl: url,
+         ChemDrawFile: url,
       };
       await updateDoc(amiditeDoc, newFields);
    };
@@ -164,6 +148,8 @@ function AddAmidite() {
       const amiditeDoc = doc(db, "amidites", id);
       await deleteDoc(amiditeDoc);
    };
+
+   const downLoadAmidite = async (url) => {};
 
    // PRESENTATIONAL COMP
 
@@ -259,141 +245,96 @@ function AddAmidite() {
       );
    };
 
-   // HANLDERs
-   const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      console.log(e.target);
+   const AmiditeView = async (id) => {
+      const docRef = doc(db, "amidites", id);
+      const docSnap = await getDoc(docRef);
 
-      setState({ ...state, [name]: value });
+      if (docSnap.exists()) {
+         console.log("Document data:", docSnap.data());
+         setAmiditesView(docSnap.data());
+      } else {
+         console.log("No such document!");
+      }
+
+      return <div></div>;
    };
 
-   const handleChangeFile = (e) => {
+   // HANLDER
+   const handleChange = (e) => {
       if (e.target.files[0]) {
          setFile(e.target.files[0]);
       }
    };
 
-   const handleSubmit = async (e) => {
-      e.preventDefault();
-
-      if (!amiditeName) {
-         toast.error("Please provide value in each input field");
-      } else {
-         // CREATE OR UPDATE
-         if (!id) {
-            const docRef = await addDoc(collection(db, "amidites"), state);
-            console.log("Document written with ID: ", docRef.id);
-         } else {
-            const amiditeRef = doc(db, "amidites", id);
-            console.log(data);
-            await updateDoc(amiditeRef, state);
-         }
-         setTimeout(() => history.push("/"), 500);
-      }
-   };
-
    return (
-      <>
-         <form onSubmit={handleSubmit}>
-            <Tooltip title="Create">
-               <IconButton variant="contained" color="primary" type="submit">
-                  <PublishRoundedIcon />
-               </IconButton>
-            </Tooltip>
-            <Grid
-               container
-               alignItems="center"
-               justify="center"
-               direction="column"
-            >
-               <Grid item>
-                  <TextField
-                     id="AmiditeName"
-                     name="AmiditeName"
-                     label="Amidite Name..."
-                     variant="standard"
-                     type="text"
-                     value={amiditeName || ""}
-                     onChange={handleInputChange}
-                  />
-               </Grid>
-               <Grid item>
-                  <TextField
-                     id="ChemName"
-                     name="ChemName"
-                     label="Chem Name..."
-                     variant="standard"
-                     type="text"
-                     value={chemName || ""}
-                     onChange={handleInputChange}
-                  />
-               </Grid>
-               <Grid item>
-                  <TextField
-                     id="ShortAbv"
-                     name="ShortAbv"
-                     label="ShortAbv..."
-                     variant="standard"
-                     type="text"
-                     value={shortAbv || ""}
-                     onChange={handleInputChange}
-                  />
-               </Grid>
-               <Grid item>
-                  <TextField
-                     id="RegAbv"
-                     name="RegAbv"
-                     label="RegAbv..."
-                     variant="standard"
-                     type="text"
-                     value={regAbv || ""}
-                     onChange={handleInputChange}
-                  />
-               </Grid>
-               <Grid item>
-                  <TextField
-                     id="MmAbv"
-                     name="MmAbv"
-                     label="Mermade Abv..."
-                     variant="standard"
-                     type="text"
-                     value={mmAbv || ""}
-                     onChange={handleInputChange}
-                  />
-               </Grid>
-               <Grid item>
-                  <TextField
-                     id="CasNum"
-                     name="CasNum"
-                     label="Cas Number..."
-                     variant="standard"
-                     type="text"
-                     value={casNum || ""}
-                     onChange={handleInputChange}
-                  />
-               </Grid>
-               <Grid item>
-                  <TextField
-                     id="MolWeight"
-                     name="MolWeight"
-                     label="Mol Weight..."
-                     variant="standard"
-                     type="number"
-                     value={molWeight || ""}
-                     onChange={handleInputChange}
-                  />
-               </Grid>
-               <Grid item>
-                  <input
-                     type="file"
-                     name="file"
-                     placeholder="Chem Draw File..."
-                     onChange={handleChangeFile}
-                  />
-               </Grid>
-            </Grid>
-         </form>
-      </>
+      <div className="App">
+         <Button variant="contained" onClick={createAmidite}>
+            Create Amidite
+         </Button>
+         <TextField
+            id="AmiditeName"
+            label="Amidite Name..."
+            variant="standard"
+            onChange={(event) => {
+               setAmiditeName(event.target.value);
+            }}
+         />
+         <TextField
+            id="ChemName"
+            label="Chem Name..."
+            variant="standard"
+            onChange={(event) => {
+               setChemName(event.target.value);
+            }}
+         />
+         <TextField
+            id="MolWeight"
+            label="Mol Weight..."
+            variant="standard"
+            type="number"
+            onChange={(event) => {
+               setMolWeight(event.target.value);
+            }}
+         />
+         <TextField
+            id="CasNum"
+            label="Cas Number..."
+            variant="standard"
+            onChange={(event) => {
+               setCasNum(event.target.value);
+            }}
+         />
+         <TextField
+            id="ShortAbv"
+            label="ShortAbv..."
+            variant="standard"
+            onChange={(event) => {
+               setShortAbv(event.target.value);
+            }}
+         />
+         <TextField
+            id="RegAbv"
+            label="RegAbv..."
+            variant="standard"
+            onChange={(event) => {
+               setRegAbv(event.target.value);
+            }}
+         />
+         <TextField
+            id="MmAbv"
+            label="Mermade Abv..."
+            variant="standard"
+            onChange={(event) => {
+               setMmAbv(event.target.value);
+            }}
+         />
+         <input
+            type="file"
+            placeholder="Chem Draw File..."
+            onChange={handleChange}
+         />
+         <AmiditesHome />
+      </div>
    );
 }
 

@@ -8,7 +8,7 @@ import Header from "./components/Header/Header";
 import View from "./components/View/View";
 import Amidites from "./components/Amidites/Amidites";
 import AmiditesHome from "./components/ExtraComp/AmiditesHome/AmiditesHome";
-import AddAmidite from "./components/AddAmidite/AddAmidite";
+import AddAmidite from "./components/ExtraComp/AddAmiditeNew/AddAmidite";
 import About from "./components/About/About";
 
 const App = () => {
