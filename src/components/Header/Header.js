@@ -8,8 +8,10 @@ const Header = () => {
 
    useEffect(() => {
       if (location.pathname === "/") {
+         setActiveTab("AmiditeList");
+      } else if (location.pathname === "/amidites") {
          setActiveTab("Amidites");
-      } else if (location.pathname === "/addAmidite") {
+      } else if (location.pathname === "/addAmdite") {
          setActiveTab("AddAmidite");
       } else if (location.pathname === "/about") {
          setActiveTab("About");
@@ -25,10 +27,18 @@ const Header = () => {
          <div className="header-right">
             <Link to="/">
                <p
+                  className={`${activeTab === "AmiditeList" ? "active" : ""}`}
+                  onClick={() => setActiveTab("AmiditeList")}
+               >
+                  Amidites
+               </p>
+            </Link>
+            <Link to="/amidites">
+               <p
                   className={`${activeTab === "Amidites" ? "active" : ""}`}
                   onClick={() => setActiveTab("Amidites")}
                >
-                  Amidites
+                  Edit Amidite
                </p>
             </Link>
 

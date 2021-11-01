@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import "./AddAmidite";
 import { toast } from "react-toastify";
+import { useHistory, useParams } from "react-router-dom";
 
 // ******UPDATED PAGE*********
 
 // FIREBASE IMPORTS
-import { db } from "../../firebaseConfig";
+import { db } from "../../src/firebaseConfig";
 import {
    collection,
    getDocs,
@@ -16,7 +17,7 @@ import {
    doc,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import useFirestore from "../../Hooks/useFirestore";
+import useFirestore from "../../src/Hooks/useFirestore";
 
 // MATERIAL UI IMPORTS
 import Button from "@mui/material/Button";
@@ -27,10 +28,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import EditIcon from "@mui/icons-material/Edit";
-
 import PublishRoundedIcon from "@mui/icons-material/PublishRounded";
 import { Grid } from "@mui/material";
-
 import LinkIcon from "@mui/icons-material/Link";
 import DownloadIcon from "@mui/icons-material/Download";
 
@@ -40,7 +39,7 @@ const initialState = {
    shortAbv: "",
    regAbv: "",
    casNum: "",
-   molWeight: Number(molWeight),
+   molWeight: 0,
    mmAbv: "",
    fileUrl: "",
 };
@@ -69,6 +68,7 @@ function AddAmidite() {
    const { id } = useParams();
 
    console.log(`The ID: ${id}`);
+   console.log(`The FILE: ${file}`);
 
    // FIREBASE REF
    const amiditesCollectionRef = collection(db, "amidites");
@@ -116,34 +116,12 @@ function AddAmidite() {
    useEffect(() => {
       const getAmidites = async () => {
          const data = await getDocs(amiditesCollectionRef);
-         setAmidites(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+         setData(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       };
       getAmidites();
    }, []);
 
    // FUNCTIONAL COMPS
-
-   const createAmidite = async () => {
-      const storageRef = ref(storage, file.name);
-
-      await uploadBytes(storageRef, file).then((snapshot) => {
-         console.log("Uploaded a blob or file!");
-         console.log(`This is Uploaded this:${snapshot}`);
-      });
-      getDownloadURL(ref(storage, file.name)).then((url) => {
-         setUrl(url);
-      });
-      await addDoc(amiditesCollectionRef, {
-         amiditeName,
-         chemName,
-         shortAbv,
-         regAbv,
-         mmAbv,
-         casNum,
-         molWeight,
-         fileUrl,
-      });
-   };
 
    const updateAmidite = async (id) => {
       const amiditeDoc = doc(db, "amidites", id);
@@ -168,95 +146,7 @@ function AddAmidite() {
    // PRESENTATIONAL COMP
 
    const AmiditesHome = () => {
-      return (
-         <>
-            <table className="styled-table">
-               <thead>
-                  <tr>
-                     <th style={{ textAlign: "center" }}>No.</th>
-                     <th style={{ textAlign: "center" }}>Amidite Name</th>
-                     <th style={{ textAlign: "center" }}>Chem Name</th>
-                     <th style={{ textAlign: "center" }}>Mole Weight</th>
-                     <th style={{ textAlign: "center" }}>Cas Number</th>
-                     <th style={{ textAlign: "center" }}>Reg Abv</th>
-                     <th style={{ textAlign: "center" }}>Short Abv</th>
-                     <th style={{ textAlign: "center" }}>Mermade Abv</th>
-                     <th style={{ textAlign: "center" }}>Options</th>
-                     <th style={{ textAlign: "center" }}>File</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  {amidites.map((amidite) => {
-                     return (
-                        <tr key={amidite.id}>
-                           <th scope="row">{amidite.id}</th>
-                           <td>{amidite.amiditeName}</td>
-                           <td>{amidite.chemName}</td>
-                           <td>{amidite.molWeight}</td>
-                           <td>{amidite.casNum}</td>
-                           <td>{amidite.regAbv}</td>
-                           <td>{amidite.shortAbv}</td>
-                           <td>{amidite.mmAbv}</td>
-                           <td>
-                              <ButtonGroup
-                                 variant="contained"
-                                 aria-label="outlined primary button group"
-                              >
-                                 <Tooltip title="Edit">
-                                    <IconButton
-                                       variant="contained"
-                                       onClick={() => {
-                                          updateAmidite(amidite.id);
-                                       }}
-                                    >
-                                       <EditIcon />
-                                    </IconButton>
-                                 </Tooltip>
-                                 <Tooltip title="Delete">
-                                    <IconButton
-                                       variant="contained"
-                                       onClick={() => {
-                                          deleteAmidite(amidite.id);
-                                       }}
-                                    >
-                                       <DeleteIcon />
-                                    </IconButton>
-                                 </Tooltip>
-                                 <Tooltip title="Link">
-                                    <IconButton
-                                       variant="contained"
-                                       href={amidite.ChemDrawFile}
-                                    >
-                                       <LinkIcon />
-                                    </IconButton>
-                                 </Tooltip>
-                                 <Tooltip title="Download">
-                                    <IconButton
-                                       variant="contained"
-                                       onClick={() => {
-                                          downLoadAmidite(amidite.ChemDrawFile);
-                                       }}
-                                    >
-                                       <DownloadIcon />
-                                    </IconButton>
-                                 </Tooltip>
-                              </ButtonGroup>
-                           </td>
-                           <td>
-                              <img
-                                 width={100}
-                                 height={100}
-                                 mode="fit"
-                                 src={amidite.ChemDrawFile}
-                              ></img>
-                           </td>
-                        </tr>
-                     );
-                  })}
-               </tbody>
-            </table>
-         </>
-      );
+      return <></>;
    };
 
    // HANLDERs
@@ -386,9 +276,8 @@ function AddAmidite() {
                <Grid item>
                   <input
                      type="file"
-                     name="file"
                      placeholder="Chem Draw File..."
-                     onChange={handleChangeFile}
+                     onChange={handleChange}
                   />
                </Grid>
             </Grid>

@@ -7,9 +7,10 @@ import "./App.css";
 import Header from "./components/Header/Header";
 import View from "./components/View/View";
 import Amidites from "./components/Amidites/Amidites";
-import AmiditesHome from "./components/ExtraComp/AmiditesHome/AmiditesHome";
-import AddAmidite from "./components/ExtraComp/AddAmiditeNew/AddAmidite";
+import AddAmidite from "./components/AddAmidites/AddAmidites";
 import About from "./components/About/About";
+import AmiditesHome from "./components/AmiditesHome/AmiditesHome";
+import EditAmidite from "./components/EditAmidite/EditAmidite";
 
 const App = () => {
    return (
@@ -18,12 +19,13 @@ const App = () => {
             <div>
                <Header />
                <Switch>
-                  <Route exact path="/" component={Amidites} />
+                  <Route exact path="/" component={AmiditesHome} />
+                  <Route path="/amdites" component={Amidites} />
+                  <Route path="/addAmidite" component={AddAmidite} />
+                  <Route path="/about" component={About} />
                   <Route exact path="/amidites" component={Amidites} />
                   <Route path="/view/:id" component={View} />
-                  <Route path="/about" component={About} />
-                  <Route path="/addAmidite" component={AddAmidite} />
-                  <Route path="/updateAmidite/:id" component={AddAmidite} />
+                  <Route path="/editAmidite/:id" component={EditAmidite} />
                </Switch>
             </div>
          </Router>
