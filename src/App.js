@@ -20,12 +20,11 @@ const App = () => {
                <Header />
                <Switch>
                   <Route exact path="/" component={AmiditesHome} />
-                  <Route path="/amdites" component={Amidites} />
+                  <Route path="/amidites" component={Amidites} />
                   <Route path="/addAmidite" component={AddAmidite} />
-                  <Route path="/about" component={About} />
-                  <Route exact path="/amidites" component={Amidites} />
-                  <Route path="/view/:id" component={View} />
                   <Route path="/editAmidite/:id" component={EditAmidite} />
+                  <Route path="/view/:id" component={View} />
+                  <Route path="/about" component={About} />
                </Switch>
             </div>
          </Router>
