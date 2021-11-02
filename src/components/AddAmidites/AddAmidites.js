@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./AmiditesTable.css";
+import "./AddAmidites.css";
 import { db } from "../../firebaseConfig";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
