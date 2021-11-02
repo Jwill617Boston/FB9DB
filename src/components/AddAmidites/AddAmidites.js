@@ -31,7 +31,7 @@ function AddAmidites() {
    const [molWeight, setMolWeight] = useState(0);
    const [casNum, setCasNum] = useState("");
    const [file, setFile] = useState("");
-   const [url, setUrl] = useState(null);
+   const [url, setUrl] = useState("");
    const [amidites, setAmidites] = useState([]);
    const [amiditesView, setAmiditesView] = useState([]);
    const [progress, setProgress] = useState(0);
@@ -54,6 +54,15 @@ function AddAmidites() {
       getAmidites();
    }, []);
 
+   useEffect(() => {
+      const getUrl = async () => {
+         await getDownloadURL(ref(storage, file.name)).then((url) => {
+            setUrl(url);
+         });
+      };
+      getUrl();
+   }, [file]);
+
    // FUNCTIONAL COMPS
 
    const createAmidite = async () => {
@@ -64,9 +73,7 @@ function AddAmidites() {
          console.log("Uploaded a blob or file!");
          console.log(`This is Uploaded this:${snapshot}`);
       });
-      await getDownloadURL(ref(storage, file.name)).then((url) => {
-         setUrl(url);
-      });
+
       await addDoc(amiditesCollectionRef, {
          chemName,
          molWeight: Number(molWeight),
