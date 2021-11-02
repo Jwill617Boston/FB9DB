@@ -1,35 +1,16 @@
 import { db } from "../../firebaseConfig";
-import { Link } from "react-router-dom";
-import {
-   collection,
-   addDoc,
-   updateDoc,
-   doc,
-   getDoc,
-   getDocs,
-   deleteDoc,
-} from "firebase/firestore";
-import { useHistory, useParams } from "react-router-dom";
+
+import { collection, updateDoc, doc, getDoc } from "firebase/firestore";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import useFirestore from "../../Hooks/useFirestore";
 import "./EditAmidite.css";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-import ButtonGroup from "@mui/material/ButtonGroup";
-import DeleteIcon from "@mui/icons-material/Delete";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import EditIcon from "@mui/icons-material/Edit";
-import { DataGrid } from "@mui/x-data-grid";
-import LinkIcon from "@mui/icons-material/Link";
-import DownloadIcon from "@mui/icons-material/Download";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import { styled } from "@mui/material/styles";
 
 const EditAmidite = () => {
    // STATE
@@ -58,7 +39,6 @@ const EditAmidite = () => {
    console.log("The amiditeName:", amiditeName);
 
    // FIREBASE REF
-   const amiditesCollectionRef = collection(db, "amidites");
 
    // USE EFFECTS
 
@@ -156,16 +136,12 @@ const EditAmidite = () => {
       await updateDoc(amiditeDoc, newFields);
    };
 
- 
-
    // HANLDER
    const handleChange = (e) => {
       if (e.target.files[0]) {
          setFile(e.target.files[0]);
       }
    };
-
-
 
    return (
       <>
