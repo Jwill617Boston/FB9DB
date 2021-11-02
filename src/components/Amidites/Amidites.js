@@ -10,6 +10,7 @@ import {
    doc,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import toasty from "toasty";
 
 // MATERIAL UI
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -40,10 +41,6 @@ function AddAmidite() {
    // FIREBASE REF
    const amiditesCollectionRef = collection(db, "amidites");
    const storage = getStorage();
-
-   console.log(`This is File:${file}`);
-   console.log(`This is Url:${url}`);
-   console.log(`This is AmiditesView:${amiditesView}`);
 
    // useEFFECTS
    useEffect(() => {

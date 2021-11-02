@@ -40,9 +40,8 @@ function AddAmidites() {
    const amiditesCollectionRef = collection(db, "amidites");
    const storage = getStorage();
 
-   console.log(`This is File:${file}`);
-   console.log(`This is Url:${url}`);
-   console.log(`This is AmiditesView:${amiditesView}`);
+   console.log("file", file);
+   
 
    // useEFFECTS
 
@@ -55,7 +54,12 @@ function AddAmidites() {
    }, []);
 
    useEffect(() => {
+      const storageRef = ref(storage, file.name);
       const getUrl = async () => {
+         await uploadBytes(storageRef, file).then((snapshot) => {
+            console.log("Uploaded a blob or file!");
+            console.log(`This is Uploaded this:${snapshot}`);
+         });
          await getDownloadURL(ref(storage, file.name)).then((url) => {
             setUrl(url);
          });
@@ -67,12 +71,6 @@ function AddAmidites() {
 
    const createAmidite = async () => {
       const storage = getStorage();
-      const storageRef = ref(storage, file.name);
-
-      await uploadBytes(storageRef, file).then((snapshot) => {
-         console.log("Uploaded a blob or file!");
-         console.log(`This is Uploaded this:${snapshot}`);
-      });
 
       await addDoc(amiditesCollectionRef, {
          chemName,
