@@ -42,7 +42,6 @@ const EditAmidite = () => {
    const [casNum, setCasNum] = useState("");
    const [file, setFile] = useState("");
    const [url, setUrl] = useState(null);
-   const [amidites, setAmidites] = useState([]);
    const [idData, setIdData] = useState([]);
    const [progress, setProgress] = useState(0);
 
@@ -51,13 +50,12 @@ const EditAmidite = () => {
    const [state, setState] = useState("");
    const [data, setData] = useState({});
    const [file2, setFile2] = useState(null);
-
    const storage = getStorage();
-   const history = useHistory();
    const { id } = useParams();
 
    console.log(`The ID: ${id}`);
-   console.log(`The ID Data: ${idData}`);
+   console.log("The ID Data:", idData);
+   console.log("The amiditeName:", amiditeName);
 
    // FIREBASE REF
    const amiditesCollectionRef = collection(db, "amidites");
@@ -73,6 +71,28 @@ const EditAmidite = () => {
    }, [docs]);
 
    useEffect(() => {
+      const {
+         chemName,
+         molWeight,
+         casNum,
+         shortAbv,
+         regAbv,
+         amiditeName,
+         mmAbv,
+         url,
+      } = idData;
+
+      setAmiditeName(amiditeName);
+      setChemName(chemName);
+      setShortAbv(shortAbv);
+      setRegAbv(regAbv);
+      setMmAbv(mmAbv);
+      setMolWeight(molWeight);
+      setCasNum(casNum);
+      setUrl(url);
+   }, [idData]);
+
+   useEffect(() => {
       const getUpload = async () => {
          const storageRef = ref(storage, file.name);
          await uploadBytes(storageRef, file).then((snapshot) => {
@@ -85,14 +105,6 @@ const EditAmidite = () => {
       };
       getUpload();
    }, [file]);
-
-   useEffect(() => {
-      const getAmidites = async () => {
-         const data = await getDocs(amiditesCollectionRef);
-         setAmidites(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      };
-      getAmidites();
-   }, []);
 
    useEffect(() => {
       const getAmidite = async () => {
@@ -115,6 +127,9 @@ const EditAmidite = () => {
 
    const handleEdit = async (e) => {
       e.preventDefault();
+
+      if (file !== "") {
+      }
 
       const storage = getStorage();
       const storageRef = ref(storage, file.name);

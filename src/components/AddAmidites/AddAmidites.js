@@ -88,117 +88,114 @@ function AddAmidites() {
 
    return (
       <>
-         <form>
-            <Grid container>
-               <Grid sm={6}>
-                  <Grid item>
-                     <Item>
-                        {" "}
-                        <TextField
-                           id="AmiditeName"
-                           label="Amidite Name..."
-                           variant="standard"
-                           onChange={(event) => {
-                              setAmiditeName(event.target.value);
-                           }}
-                        />
-                     </Item>
-                  </Grid>
-                  <Grid item>
-                     <Item>
-                        {" "}
-                        <TextField
-                           id="ChemName"
-                           label="Chem Name..."
-                           variant="standard"
-                           onChange={(event) => {
-                              setChemName(event.target.value);
-                           }}
-                        />
-                     </Item>
-                  </Grid>
-                  <Grid item>
-                     <Item>
-                        <TextField
-                           id="MolWeight"
-                           label="Mol Weight..."
-                           variant="standard"
-                           type="number"
-                           onChange={(event) => {
-                              setMolWeight(event.target.value);
-                           }}
-                        />
-                     </Item>
-                  </Grid>
-                  <Grid item>
-                     <Item>
-                        <TextField
-                           id="CasNum"
-                           label="Cas Number..."
-                           variant="standard"
-                           onChange={(event) => {
-                              setCasNum(event.target.value);
-                           }}
-                        />
-                     </Item>
-                  </Grid>
+         <Grid container>
+            <Grid sm={6}>
+               <Grid item>
+                  <Item>
+                     <TextField
+                        id="AmiditeName"
+                        label="Amidite Name..."
+                        variant="standard"
+                        onChange={(event) => {
+                           setAmiditeName(event.target.value);
+                        }}
+                     />
+                  </Item>
                </Grid>
-               <Grid sm={6}>
-                  <Grid item>
-                     <Item>
-                        <TextField
-                           id="ShortAbv"
-                           label="ShortAbv..."
-                           variant="standard"
-                           onChange={(event) => {
-                              setShortAbv(event.target.value);
-                           }}
-                        />
-                     </Item>
-                  </Grid>
-                  <Grid item>
-                     <Item>
-                        <TextField
-                           id="RegAbv"
-                           label="RegAbv..."
-                           variant="standard"
-                           onChange={(event) => {
-                              setRegAbv(event.target.value);
-                           }}
-                        />
-                     </Item>
-                  </Grid>
-                  <Grid item>
-                     <Item>
-                        <TextField
-                           id="MmAbv"
-                           label="Mermade Abv..."
-                           variant="standard"
-                           onChange={(event) => {
-                              setMmAbv(event.target.value);
-                           }}
-                        />
-                     </Item>
-                  </Grid>
-                  <Grid item>
-                     <Item>
-                        <input
-                           type="file"
-                           placeholder="Chem Draw File..."
-                           onChange={handleChange}
-                        />
-                     </Item>
-                  </Grid>
+               <Grid item>
+                  <Item>
+                     {" "}
+                     <TextField
+                        id="ChemName"
+                        label="Chem Name..."
+                        variant="standard"
+                        onChange={(event) => {
+                           setChemName(event.target.value);
+                        }}
+                     />
+                  </Item>
+               </Grid>
+               <Grid item>
+                  <Item>
+                     <TextField
+                        id="MolWeight"
+                        label="Mol Weight..."
+                        variant="standard"
+                        type="number"
+                        onChange={(event) => {
+                           setMolWeight(event.target.value);
+                        }}
+                     />
+                  </Item>
+               </Grid>
+               <Grid item>
+                  <Item>
+                     <TextField
+                        id="CasNum"
+                        label="Cas Number..."
+                        variant="standard"
+                        onChange={(event) => {
+                           setCasNum(event.target.value);
+                        }}
+                     />
+                  </Item>
                </Grid>
             </Grid>
-            <Grid item sm={12}>
-               <Item>
-                  <Button variant="contained" onClick={createAmidite}>
-                     Create Amidite
-                  </Button>
-               </Item>
+            <Grid sm={6}>
+               <Grid item>
+                  <Item>
+                     <TextField
+                        id="ShortAbv"
+                        label="ShortAbv..."
+                        variant="standard"
+                        onChange={(event) => {
+                           setShortAbv(event.target.value);
+                        }}
+                     />
+                  </Item>
+               </Grid>
+               <Grid item>
+                  <Item>
+                     <TextField
+                        id="RegAbv"
+                        label="RegAbv..."
+                        variant="standard"
+                        onChange={(event) => {
+                           setRegAbv(event.target.value);
+                        }}
+                     />
+                  </Item>
+               </Grid>
+               <Grid item>
+                  <Item>
+                     <TextField
+                        id="MmAbv"
+                        label="Mermade Abv..."
+                        variant="standard"
+                        onChange={(event) => {
+                           setMmAbv(event.target.value);
+                        }}
+                     />
+                  </Item>
+               </Grid>
+               <Grid item>
+                  <Item>
+                     <input
+                        type="file"
+                        placeholder="Chem Draw File..."
+                        onChange={handleChange}
+                     />
+                  </Item>
+               </Grid>
             </Grid>
-         </form>
+         </Grid>
+         <Grid item sm={12}>
+            <Item>
+               <Button variant="contained" onClick={createAmidite}>
+                  Create Amidite
+               </Button>
+            </Item>
+         </Grid>
       </>
    );
 }
