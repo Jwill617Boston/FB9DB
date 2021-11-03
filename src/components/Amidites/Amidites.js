@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./Amidites.css";
+import "../../components/AddAmidites/AddAmidites";
 import { db } from "../../firebaseConfig";
 import {
    collection,

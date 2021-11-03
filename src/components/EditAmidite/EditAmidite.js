@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import useFirestore from "../../Hooks/useFirestore";
-import "./EditAmidite.css";
+import "../../components/EditAmidite/EditAmidite.css";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import Button from "@mui/material/Button";

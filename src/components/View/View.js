@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { db } from "../../firebaseConfig";
 import { getDoc, doc } from "firebase/firestore";
-import "./View.css";
+import "../../components/View/View.css";
 
 // MATERIAL UI
 

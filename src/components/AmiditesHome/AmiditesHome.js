@@ -1,4 +1,4 @@
-import "./AmiditesHome.css";
+import "../../components/AmiditesHome/AmiditesHome.css";
 import { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
