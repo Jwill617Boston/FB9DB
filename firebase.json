@@ -20,5 +20,8 @@
   "emulators": {},
   "remoteconfig": {
     "template": "remoteconfig.template.json"
+  },
+  "functions": {
+    "source": "functions"
   }
 }
